@@ -1,4 +1,8 @@
-""" I'm trying to make ThermoSolver in Python for some reason."""
+""" I'm trying to make ThermoSolver in Python for some reason.
+    Run the script to initialized the functions.
+    antoines is for vapor pressure.
+    compressibility is for compressibility factor.
+    """
 
 
 import pandas as pd
@@ -223,6 +227,7 @@ def departure(name,temp,pres,reduced=False,_print=True):
 
 def Cp(name,temp,print=True):
     """Returns the constant pressure heat capacity in J/mol."""
+    Cp_data
     
 print(antoins("Water",283.9))
        
