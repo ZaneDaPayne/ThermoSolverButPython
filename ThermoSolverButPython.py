@@ -1,7 +1,15 @@
 """ I'm trying to make ThermoSolver in Python for some reason.
-    Run the script to initialized the functions.
-    antoines is for vapor pressure.
-    compressibility is for compressibility factor.
+    ==========================================================
+    INSTRUCTIONS:    
+        1.) Run the script to initialized the functions.
+        2.) Type your desired function in the console.
+    ----------------------------------------------------------
+    Functions:
+        ls() lists the matrials there is data for.
+        antoines() is for vapor pressure.
+        compressibility() is for compressibility factor.
+        fugasity() is for the fugasity coeficient.
+    ==========================================================
     """
 
 
@@ -130,11 +138,19 @@ entropy_departure_1[1:,0]=entropy_departure_0[1:,0].astype(float)
 s_dep_0 = interp2d(entropy_departure_0[0,1:],entropy_departure_0[1:,0],entropy_departure_0[1:,1:])#inputs are (Pr,Tr)
 s_dep_1 = interp2d(entropy_departure_1[0,1:],entropy_departure_1[1:,0],entropy_departure_1[1:,1:])  
 
+#%% Cp data
+
+cp_ideal_gas = pd.read_csv("Cp_ideal_gas.csv",header=1,float_precision=5)
+
+for i in range(len(cp_ideal_gas.Name)):
+    cp_ideal_gas.fillna(value=0,inplace=True)
+    
+    
 
 #%% material properties
 
 materials = pd.read_csv("critical_acentric_antoine.txt",sep=" ",float_precision=6)
-materials.to_numpy()
+materials.to_numpy()# this fixes values that are read wrong for some reason, even though it's not saved
 #fix the negative values of C. Only works because no positive values start with 2.
 for i in range(len(materials["C"])):
         if np.floor(materials["C"][i]/1000)==2:
@@ -152,19 +168,19 @@ for i in range(len(materials["omega"])):
         else:
             pass 
           
-#%%
+#%% functions
 
 def ls():
-    """Lists all materials in library."""
+    """Lists all materials in Antoines/material_properties library."""
     for i in range(len(materials["Name"])):
         print(f"{materials['Formula'][i]} {materials['Name'][i]}")
         
 def material_properties(material):
-    """Accepts string. Returns series of data for the specified material.
+    """material is string. Returns series of data for the specified material.
     material_properties(name)['MW(g/mol)'] is the MW of that name."""
     name_index = 0
     for i in range(len(materials["Name"])):
-        if materials["Name"][i]==material:
+        if materials["Name"][i]==material:# could use materials.Name[i]
             name_index = i
             break
         elif materials["Formula"][i]==material:
@@ -225,11 +241,51 @@ def departure(name,temp,pres,reduced=False,_print=True):
         print(f"Enthalpy departure function is {round(hdep,4)}.\nEntropy departure function is {round(sdep,4)}.")
     return (sdep,hdep)
 
-def Cp(name,temp,print=True):
-    """Returns the constant pressure heat capacity in J/mol."""
-    Cp_data
+def fugasity(name,temp,pres,reduced=False):
+    """name as string, temp in K, pres in bar. If using reduced T and P, reduced=True.
+    Returns the fugasity coeficient."""
+    material = material_properties(name)
+    omega = material['omega']
+    if reduced==True:
+         Pr=pres
+         Tr=temp 
+    else:
+        Tc = material['Tc(K)']
+        Pc = material['Pc(Bar)']
+        Tr = temp/Tc
+        Pr = pres/Pc
+    phi = 10**(phi0(Pr,Tr)[0] + omega*phi1(Pr,Tr)[0])
+    return phi
+# need to impliment temperature range so it will use the correct data
+def cp(name,temp,_print=True):
+    """temp must be in K. Returns the constant pressure heat capacity in J/molK."""
+    #find the row of the cp data for the material
+    name_index = 0
+    for i in range(len(cp_ideal_gas["Name"])):
+        if cp_ideal_gas["Name"][i]==name:
+            name_index = i
+            break
+        elif cp_ideal_gas["Formula"][i]==name:
+            name_index = i
+            break
+        else:
+            pass
     
-print(antoins("Water",283.9))
+    material = cp_ideal_gas.iloc[name_index]
+    # These MUST be converted from their colapsed form in the table
+    A = material["A"]
+    B = material["B"]*10**-3
+    C = material["C"]*10**-6
+    D = material["D"]*10**5
+    E = material["E"]*10**-9    
+    cp = (A + B*temp + C*temp**2 + D*temp**-2 + E*temp**3)*8.31446261815324
+    
+    if _print==True:
+        print(f"\nThe ideal gas heat capacity of {name} is {round(cp,4)} J/molK.")
+    else:
+        return cp
+    
+cp("Water",300)
        
 
    
