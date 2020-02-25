@@ -1,0 +1,30 @@
+﻿Formula,Name,Phase,A,Bx10^3,D x10^-5,Source
+CH4O,Methanol,L,9.815,,,2
+C2H6O,Ethanol,L,13.592,,,2
+C3H6O,Acetone,L,11.184,13.375,,2
+C5H12,Pentane,L,18.691,5.254,,3
+C6H6,Benzene,L,16.31,0,,2
+C6H14,Hexane,L,23.695,,,2
+Al,Aluminum,L,3.819,,,1
+Al,Aluminum,S,2.486,1.49,,1
+Al2O3,Aluminum oxide,S,23.154,,,4
+C,Graphite,S,2.063,0.514,-1.057,1
+C,Diamond,S,0.782,,,4
+Cu,Copper,L,3.95,,,4
+Cu,Copper,S,2.723,,,1
+Cu2O,Cuprous oxide,"S, alpha",7.498,,,1
+CuO,Cupric oxide,S,4.666,,,1
+Fe,Iron,"S, alpha",2.104,2.979,,1
+Fe3O4,Iron oxide,S,11.012,24.26,,1
+GaAs,Gallium arsenide,S,5.438,0.73,,1
+Ni,Nickel,S,1.508,4.308,0.297,1
+Si,Silicon,L,3.272,,,4
+Si,Silicon,S,2.879,0.297,-0.498,1
+SiO2,Silicon dioxide,S,5.647,4.127,-1.359,1
+SiCl3H,Trichlorosilane,L,15.678,,,2
+SiCl4,Tetrachlorosilane,L,16.117,,,2
+H2O,Water,L,9.069,,,2
+H2O,Water (ice),S,4.196,,,5
+H2SO4,Sulfuric acid,L,16.731,1.875,,3
+HNO3,Nitric acid,L,13.315,,,2
+NH3,Ammonia,L,6.88,9.682,,2
