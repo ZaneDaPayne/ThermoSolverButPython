@@ -143,7 +143,8 @@ s_dep_1 = interp2d(entropy_departure_1[0,1:],entropy_departure_1[1:,0],entropy_d
 cp_ideal_gas = pd.read_csv("Cp_ideal_gas.csv",header=1,float_precision=5)
 
 for i in range(len(cp_ideal_gas.Name)):
-    cp_ideal_gas.fillna(value=0,inplace=True)
+    cp_ideal_gas.fillna(value=0,inplace=True)# replaces Nan with 0 so calculations 
+                                             # with emptpy cells return a number
     
     
 
@@ -256,9 +257,11 @@ def fugasity(name,temp,pres,reduced=False):
         Pr = pres/Pc
     phi = 10**(phi0(Pr,Tr)[0] + omega*phi1(Pr,Tr)[0])
     return phi
+
 # need to impliment temperature range so it will use the correct data
 def cp(name,temp,_print=True):
     """temp must be in K. Returns the constant pressure heat capacity in J/molK."""
+    
     #find the row of the cp data for the material
     name_index = 0
     for i in range(len(cp_ideal_gas["Name"])):
@@ -272,20 +275,26 @@ def cp(name,temp,_print=True):
             pass
     
     material = cp_ideal_gas.iloc[name_index]
+    
     # These MUST be converted from their colapsed form in the table
     A = material["A"]
     B = material["B"]*10**-3
     C = material["C"]*10**-6
     D = material["D"]*10**5
-    E = material["E"]*10**-9    
-    cp = (A + B*temp + C*temp**2 + D*temp**-2 + E*temp**3)*8.31446261815324
+    E = material["E"]*10**-9
+    tmin = material.Tmin
+    tmax = material.Tmax
+    if temp>tmax or temp<tmin:
+        print(f"The specified temperature is out of bounds.\nTemp must be between {tmin}K and {tmax}K")
+        return
+    else:    
+        cp = (A + B*temp + C*temp**2 + D*temp**-2 + E*temp**3)*8.31446261815324  
+        if _print==True:
+            print(f"\nThe ideal gas heat capacity of {name} is {round(cp,4)} J/molK.")
+        else:
+            return cp
     
-    if _print==True:
-        print(f"\nThe ideal gas heat capacity of {name} is {round(cp,4)} J/molK.")
-    else:
-        return cp
-    
-cp("Water",300)
+cp("Water",200)
        
 
    
